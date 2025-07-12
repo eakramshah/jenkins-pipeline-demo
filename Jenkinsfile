@@ -2,10 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Checkout') {
             steps {
-                echo 'Hello, Jenkins Pipeline!'
+                echo 'Checking out code...'
+                checkout scm
             }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'pytest test_app.py'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
         }
     }
 }
