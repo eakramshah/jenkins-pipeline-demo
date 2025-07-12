@@ -1,16 +1,28 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/opt/homebrew/bin:$PATH"
+    }
+
     stages {
-        stage('Install Dependencies') {
+        stage('Setup Virtual Env') {
             steps {
-                sh '/opt/homebrew/bin/pip3 install -r requirements.txt'
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '/opt/homebrew/bin/pytest test_app.py'
+                sh '''
+                    source venv/bin/activate
+                    pytest test_app.py
+                '''
             }
         }
     }
@@ -21,4 +33,7 @@ pipeline {
         }
     }
 }
+
+
+
 
